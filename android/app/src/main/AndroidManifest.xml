@@ -1,6 +1,16 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- 날씨 조회용 대략적 위치. 위젯이 백그라운드에서 현재 위치를 갱신한다. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- expo-location이 기본으로 선언하는 정밀 위치는 쓰지 않는다 (CLAUDE.md 확정 사항). -->
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:node="remove" />
 
     <application
       android:name=".MainApplication"
@@ -23,5 +33,44 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
+      <!-- expo-location의 위치 추적용 포그라운드 서비스는 쓰지 않으므로 제거한다. -->
+      <service
+        android:name="expo.modules.location.services.LocationTaskService"
+        tools:node="remove" />
+      <service
+        android:name="expo.modules.location.next.locationForegroundService.LocationForegroundService"
+        tools:node="remove" />
+
+      <!-- 홈 화면 위젯 (react-native-android-widget) -->
+      <service
+        android:name="com.reactnativeandroidwidget.RNWidgetCollectionService"
+        android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+      <receiver
+        android:name=".widget.TodayOutfit"
+        android:exported="false"
+        android:label="@string/widget_todayoutfit_label">
+        <intent-filter>
+          <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+          <action android:name="com.weatherclothes.WIDGET_CLICK" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/widgetprovider_todayoutfit" />
+      </receiver>
+
+      <receiver
+        android:name=".widget.TodayOutfitSmall"
+        android:exported="false"
+        android:label="@string/widget_todayoutfitsmall_label">
+        <intent-filter>
+          <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+          <action android:name="com.weatherclothes.WIDGET_CLICK" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/widgetprovider_todayoutfitsmall" />
+      </receiver>
     </application>
 </manifest>
