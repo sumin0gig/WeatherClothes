@@ -1,98 +1,53 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 옷날씨 (WeatherClothes)
 
-# Getting Started
+현재 위치의 **체감온도**로 오늘 입을 옷을 골라 **홈 화면 위젯**에 띄워 주는 Android 앱.
+서버·푸시·계정 없이 기기 안에서만 동작한다.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+- 체감온도 8구간 + 날씨(비·눈·더위·습도·바람)에 맞는 **재질**을 우선 추천
+- 같은 날에는 위젯이 몇 번 갱신돼도 같은 옷
+- 원하지 않는 옷은 옷장에서 제외
+- 포인트 컬러가 날씨에 따라 빨강(더움) → 초록 → 파랑(추움)으로 바뀜
+- 날씨 데이터: [Open-Meteo](https://open-meteo.com/) (API 키 없음, 비상업적 무료, CC BY 4.0)
 
-## Step 1: Start Metro
+자세한 설계와 규칙은 [`CLAUDE.md`](./CLAUDE.md), 출시 준비는 [`docs/play-release.md`](./docs/play-release.md).
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 개발
 
-To start the Metro dev server, run the following command from the root of your React Native project:
-
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+React Native CLI 0.88 프로젝트에 Expo 모듈(SDK 58, `expo-location`)을 붙인 구조다. Expo Go로는 실행되지 않는다.
 
 ```sh
-# Using npm
-npm run android
+npm install
+npm start            # Metro
+npm run android      # 디버그 빌드 설치 (Android SDK / 에뮬레이터 필요)
 
-# OR using Yarn
-yarn android
+npm test             # 단위 테스트 (추천 로직, 날씨·캐시, 위젯 렌더링)
+npm run typecheck
+npm run lint
 ```
 
-### iOS
+### 위젯 확인
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+앱을 한 번 실행해 위치 권한을 준 뒤, 홈 화면 길게 누르기 → 위젯 → **오늘의 옷 (4×2 / 2×2)**.
+위젯은 1시간마다, 그리고 앱에서 옷장·설정·날씨가 바뀔 때마다 갱신된다.
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### 옷 이미지 넣기
+
+`assets/clothes/`에 `카테고리_이름_재질_번호.png`(카탈로그 id와 같은 이름)를 넣고:
 
 ```sh
-bundle install
+npm run gen:images
 ```
 
-Then, and every time you update your native dependencies, run:
+자세한 규칙은 [`assets/clothes/README.md`](./assets/clothes/README.md).
+
+### 릴리스 빌드
 
 ```sh
-bundle exec pod install
+cd android && ./gradlew bundleRelease
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+출시 전에 업로드 키로 서명 설정을 바꿔야 한다 (`docs/play-release.md` 1단계).
 
-```sh
-# Using npm
-npm run ios
+## 폰트
 
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
-# WeatherClothes
+IBM Plex Sans KR / IBM Plex Mono — SIL Open Font License 1.1 (`android/app/src/main/assets/fonts/OFL-IBMPlex.txt`).
