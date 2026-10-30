@@ -15,7 +15,7 @@
 | 항목 | 결정 |
 |---|---|
 | 앱 이름 | **옷벤토리** (옷 + 인벤토리, 2026-10-30 사용자 결정). `strings.xml`의 `app_name`. |
-| 앱 아이콘 | 옷 아이템 카드 한 장이 아이콘 전체를 채움 (위: 주황 점 · 가운데: 타일 + 옷걸이 · 아래: 이름 줄, 카테고리 라벨 없음). 런처는 adaptive icon(`mipmap-anydpi-v26`, 배경 `#E9EBE6`), Play용 512px는 `docs/store/icon-512.png`, 원본 `docs/store/icon.svg`. |
+| 앱 아이콘 | 옷 아이템 카드 한 장이 아이콘 전체를 채움 (먹색 바깥 테두리 · 위: 오른쪽 주황 점 · 가운데: 타일 + 옷걸이 · 아래: 이름 줄, 카테고리 라벨 없음. adaptive 테두리는 둥근 사각형 마스크 기준). 런처는 adaptive icon(`mipmap-anydpi-v26`, 배경 `#E9EBE6`), Play용 512px는 `docs/store/icon-512.png`, 원본 `docs/store/icon.svg`. |
 | 패키지 이름 | **`com.developer_cm.weatherclothes`** (2026-10-30 사용자 결정). `applicationId`·`namespace`·Kotlin 패키지 모두 이 이름. Play에 올린 뒤에는 바꿀 수 없다. |
 | 서버 | **없음.** AWS, Firebase, 자체 백엔드, 서버리스 함수 모두 쓰지 않는다. |
 | 푸시 알림 | **없음.** 알림 관련 라이브러리, 권한도 추가하지 않는다. |
