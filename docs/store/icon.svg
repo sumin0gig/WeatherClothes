@@ -4,7 +4,7 @@
   <rect x="-1" y="0.72" width="3" height="2" fill="#F7F8F5"/>
   <line x1="-1" y1="0.30" x2="2" y2="0.30" stroke="#16181D" stroke-width="0.035"/>
   <line x1="-1" y1="0.72" x2="2" y2="0.72" stroke="#16181D" stroke-width="0.035"/>
-  <circle cx="0.755" cy="0.165" r="0.08" fill="#FC691A" stroke="#16181D" stroke-width="0.0245"/>
+  <circle cx="0.74" cy="0.172" r="0.08" fill="#FC691A" stroke="#16181D" stroke-width="0.0245"/>
   <g transform="translate(0.5 0.55) scale(0.0062)" fill="none" stroke="#5A5E66" stroke-width="8.064516129032258" stroke-linecap="round" stroke-linejoin="round"><path d="M0 -14 a9 9 0 1 1 9 -9 M0 -14 V-6 L-34 16 H34 L0 -6"/></g>
   <rect x="0.22" y="0.785" width="0.42" height="0.065" rx="0.03" fill="#16181D"/>
-  <rect x="0.22" y="0.875" width="0.26" height="0.045" rx="0.02" fill="#5A5E66"/><rect x="0.025" y="0.025" width="0.95" height="0.95" rx="0.19" fill="none" stroke="#16181D" stroke-width="0.05"/></g></g></svg>
+  <rect x="0.22" y="0.875" width="0.26" height="0.045" rx="0.02" fill="#5A5E66"/></g></g></svg>
