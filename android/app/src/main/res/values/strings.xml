@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">옷날씨</string>
+    <string name="app_name">옷벤토리</string>
     <string name="widget_todayoutfit_label">오늘의 옷 (4×2)</string>
     <string name="widget_todayoutfit_description" translatable="false">체감온도와 오늘 입을 옷 4가지를 보여줘요.</string>
     <string name="widget_todayoutfitsmall_label">오늘의 옷 (2×2)</string>

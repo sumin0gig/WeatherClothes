@@ -2,7 +2,7 @@
 
 ## 0. 지금 상태
 
-- 패키지명: `com.developer_cm.weatherclothes` / 앱 이름: `옷날씨` (`android/app/src/main/res/values/strings.xml`)
+- 패키지명: `com.developer_cm.weatherclothes` / 앱 이름: `옷벤토리` (`android/app/src/main/res/values/strings.xml`)
 - 권한: `INTERNET`, `ACCESS_COARSE_LOCATION`, `ACCESS_BACKGROUND_LOCATION` (정밀 위치 없음)
 - 서버·계정·분석·광고·푸시 없음
 
@@ -55,7 +55,7 @@
 
 ## 4. 스토어 등록정보
 
-- [ ] 앱 아이콘 512×512 (지금은 RN 기본 아이콘 — 교체 필요)
+- [x] 앱 아이콘 512×512: `docs/store/icon-512.png` (원본 `docs/store/icon.svg`. 겹친 옷 아이템 카드 디자인)
 - [ ] 그래픽 이미지 1024×500
 - [ ] 휴대전화 스크린샷 2장 이상 (오늘 화면, 옷장, 위젯)
 - [ ] 짧은 설명 / 자세한 설명
