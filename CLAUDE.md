@@ -14,6 +14,7 @@
 
 | 항목 | 결정 |
 |---|---|
+| 패키지 이름 | **`com.developer_cm.weatherclothes`** (2026-10-30 사용자 결정). `applicationId`·`namespace`·Kotlin 패키지 모두 이 이름. Play에 올린 뒤에는 바꿀 수 없다. |
 | 서버 | **없음.** AWS, Firebase, 자체 백엔드, 서버리스 함수 모두 쓰지 않는다. |
 | 푸시 알림 | **없음.** 알림 관련 라이브러리, 권한도 추가하지 않는다. |
 | 분석/트래킹 | 없음. |
@@ -329,7 +330,7 @@ __tests__/                    ← recommend, bands, tags, seed, accent, weather,
 assets/clothes/               ← 사용자가 넣을 PNG + README.md (지금은 README만)
 android/app/src/main/
   AndroidManifest.xml         ← 권한(COARSE+BACKGROUND, FINE 제거), 위젯 리시버 2개
-  java/com/weatherclothes/widget/TodayOutfit.kt, TodayOutfitSmall.kt
+  java/com/developer_cm/weatherclothes/widget/TodayOutfit.kt, TodayOutfitSmall.kt
   res/xml/widgetprovider_todayoutfit.xml, widgetprovider_todayoutfitsmall.xml
   assets/fonts/               ← IBM Plex TTF (앱·위젯 공용)
 docs/play-release.md          ← Play 출시 체크리스트
@@ -484,7 +485,7 @@ export const getClothImage = (id: string) => CLOTH_IMAGES[id];
 
 ## 12. Google Play 출시 준비 (코드 외 체크리스트, 문서로만 정리)
 
-- 패키지명/앱 이름 확정 후 Play Console에 앱 생성. 대시보드에서 **프로덕션 메뉴가 바로 열리는지 확인** (개인 계정의 비공개 테스트 요건 적용 여부가 불확실함 — 사용자가 직접 확인 예정). 필요하면 비공개 테스트 12명/14일.
+- 패키지명 `com.developer_cm.weatherclothes`로 Play Console에 앱 생성. 대시보드에서 **프로덕션 메뉴가 바로 열리는지 확인** (개인 계정의 비공개 테스트 요건 적용 여부가 불확실함 — 사용자가 직접 확인 예정). 필요하면 비공개 테스트 12명/14일.
 - **백그라운드 위치 권한 선언서**: "홈 화면 위젯이 사용자의 현재 위치 날씨에 맞는 옷차림을 보여줌"으로 핵심 기능과 직접 연결해서 작성.
 - **시연 영상**: 사전 고지 화면 → 권한 허용 → 에뮬레이터에서 위치를 바꿨을 때 위젯이 바뀌는 장면.
 - **개인정보처리방침**: 대략적 위치는 날씨 조회에만 사용, Open-Meteo로 좌표만 전송, 저장·공유하지 않음, 계정·분석 없음. (GitHub Pages 등 정적 페이지로 게시)

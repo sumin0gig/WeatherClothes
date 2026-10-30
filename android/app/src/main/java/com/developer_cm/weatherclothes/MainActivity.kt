@@ -1,4 +1,4 @@
-package com.weatherclothes
+package com.developer_cm.weatherclothes
 import expo.modules.ReactActivityDelegateWrapper
 
 import com.facebook.react.ReactActivity

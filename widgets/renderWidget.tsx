@@ -13,7 +13,7 @@ import { hex } from './parts';
 import { TodayOutfitSmallWidget } from './TodayOutfitSmallWidget';
 import { TodayOutfitWidget } from './TodayOutfitWidget';
 
-/** android/app/src/main/java/com/weatherclothes/widget/*.kt 클래스 이름과 같아야 한다 */
+/** android/app/src/main/java/com/developer_cm/weatherclothes/widget/*.kt 클래스 이름과 같아야 한다 */
 export const WIDGET_NAMES = ['TodayOutfit', 'TodayOutfitSmall'] as const;
 export type WidgetName = (typeof WIDGET_NAMES)[number];
 

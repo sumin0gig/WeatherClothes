@@ -1,4 +1,4 @@
-package com.weatherclothes.widget
+package com.developer_cm.weatherclothes.widget
 
 import com.reactnativeandroidwidget.RNWidgetProvider
 

@@ -2,7 +2,7 @@
 
 ## 0. 지금 상태
 
-- 패키지명: `com.weatherclothes` / 앱 이름: `옷날씨` (`android/app/src/main/res/values/strings.xml`)
+- 패키지명: `com.developer_cm.weatherclothes` / 앱 이름: `옷날씨` (`android/app/src/main/res/values/strings.xml`)
 - 권한: `INTERNET`, `ACCESS_COARSE_LOCATION`, `ACCESS_BACKGROUND_LOCATION` (정밀 위치 없음)
 - 서버·계정·분석·광고·푸시 없음
 
