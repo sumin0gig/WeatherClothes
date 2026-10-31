@@ -1,5 +1,5 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Linking, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -13,6 +13,8 @@ import { ExternalIcon } from '../ui/icons';
 import { Label, Text } from '../ui/Text';
 import { useTheme } from '../ui/theme';
 import { BORDER, MIN_TOUCH, RADIUS, SPACE } from '../ui/tokens';
+import { checkForUpdate, getCurrentVersion } from '../update/appUpdate';
+import { PREVIEW_UPDATE_INFO } from './UpdateScreen';
 
 /** TODO: 개인정보처리방침을 GitHub Pages 등에 게시한 뒤 주소를 넣는다 (docs/play-release.md 참고) */
 export const PRIVACY_POLICY_URL = '';
@@ -156,6 +158,16 @@ export function SettingsScreen() {
         </Text>
       </Section>
 
+      <AppVersionSection
+        onUpdateAvailable={info => navigation.navigate('Update', { info })}
+        onPreview={() =>
+          navigation.navigate('Update', {
+            info: PREVIEW_UPDATE_INFO,
+            preview: true,
+          })
+        }
+      />
+
       <Section label="PRIVACY · 개인정보">
         {PRIVACY_POLICY_URL ? (
           <LinkRow
@@ -173,6 +185,77 @@ export function SettingsScreen() {
         </Text>
       </Section>
     </ScrollView>
+  );
+}
+
+type CheckState = 'idle' | 'checking' | 'latest' | 'unsupported';
+
+const CHECK_TEXT: Record<Exclude<CheckState, 'idle'>, string> = {
+  checking: '확인 중…',
+  latest: '최신 버전이에요.',
+  unsupported:
+    'Play 스토어에서 설치한 앱에서만 확인할 수 있어요. 인터넷 연결도 확인해 주세요.',
+};
+
+/** 설정 > 앱 정보: 지금 버전 + 업데이트 확인 (새 버전이 있으면 업데이트 권유 화면) */
+function AppVersionSection({
+  onUpdateAvailable,
+  onPreview,
+}: {
+  onUpdateAvailable: (info: Awaited<ReturnType<typeof checkForUpdate>>) => void;
+  onPreview: () => void;
+}) {
+  const { palette } = useTheme();
+  const [version, setVersion] = useState<{ name: string; code: number }>();
+  const [check, setCheck] = useState<CheckState>('idle');
+
+  useEffect(() => {
+    getCurrentVersion().then(setVersion);
+  }, []);
+
+  const runCheck = async () => {
+    setCheck('checking');
+    const info = await checkForUpdate();
+    if (!info.supported) setCheck('unsupported');
+    else if (info.available || info.inProgress) {
+      setCheck('idle');
+      onUpdateAvailable(info);
+    } else setCheck('latest');
+  };
+
+  return (
+    <Section label="APP · 앱 정보">
+      <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
+        <Text font="sans700" size={17}>
+          옷벤토리
+        </Text>
+        <Text font="mono500" size={13} color={palette.sub}>
+          {version?.name ? `v${version.name} · BUILD ${version.code}` : ''}
+        </Text>
+      </View>
+      {check !== 'idle' ? (
+        <Text
+          size={13}
+          color={palette.sub}
+          accessibilityLiveRegion="polite"
+          style={{ lineHeight: 19 }}
+        >
+          {CHECK_TEXT[check]}
+        </Text>
+      ) : null}
+      <View
+        style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 4 }}
+      >
+        <Button
+          label="업데이트 확인"
+          onPress={runCheck}
+          disabled={check === 'checking'}
+        />
+        {__DEV__ ? (
+          <Button label="업데이트 화면 미리보기" onPress={onPreview} />
+        ) : null}
+      </View>
+    </Section>
   );
 }
 

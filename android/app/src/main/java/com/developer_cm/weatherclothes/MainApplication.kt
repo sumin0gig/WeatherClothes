@@ -9,6 +9,7 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
+import com.developer_cm.weatherclothes.update.AppUpdatePackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -17,8 +18,8 @@ class MainApplication : Application(), ReactApplication {
       context = applicationContext,
       packageList =
         PackageList(this).packages.apply {
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          // add(MyReactNativePackage())
+          // 최신 버전 확인 (Google Play 인앱 업데이트) — src/update/appUpdate.ts
+          add(AppUpdatePackage())
         },
     )
   }

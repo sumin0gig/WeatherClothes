@@ -272,6 +272,7 @@ type Outfit = {
 | `weatherCache` | `Weather` | 마지막 날씨 |
 | `settings` | `{ apparentOffset: number }` | 기본 `{ apparentOffset: 0 }` |
 | `onboardingDone` | `boolean` | 권한 안내 완료 여부 |
+| `updateSnooze` | `{ versionCode, until }` \| `null` | 업데이트 "나중에" — 이 버전은 `until`까지 다시 묻지 않음 |
 
 - 모든 읽기/쓰기는 타입이 있는 래퍼 함수로만 접근. JSON 파싱 실패 시 기본값.
 - `excludedIds`를 바꾸면 즉시 `requestWidgetUpdate()` 호출.
@@ -306,6 +307,7 @@ src/
     ClosetScreen.tsx          ← 옷장(제외 설정)
     SettingsScreen.tsx        ← 위치 권한 상태, 체감 보정, 출처 표기, 개인정보처리방침 링크
     OnboardingScreen.tsx      ← 위치 사전 고지 + 권한 요청
+    UpdateScreen.tsx          ← 업데이트 권유 (14장)
   state/OutfitContext.tsx     ← getTodayOutfit 결과·제외 목록·설정을 들고, 바뀌면 위젯 갱신. accent를 ThemeProvider로 내려줌
   core/getTodayOutfit.ts      ← 앱·위젯 공용 진입점
   weather/openMeteo.ts  weather/weatherCode.ts  weather/types.ts  weather/summary.ts(날씨 한 줄, 시간대 4칸)
@@ -320,6 +322,8 @@ src/
   ui/ClothImage.tsx           ← 이미지 / 자리표시자 (아래 10장)
   ui/LabelCard.tsx            ← 케어 라벨 스타일 카드
   widget/updateWidgets.ts     ← 앱에서 위젯 즉시 갱신 (requestWidgetUpdate)
+  update/appUpdate.ts         ← 네이티브 AppUpdate 모듈 래퍼 (Play 인앱 업데이트)
+  update/policy.ts            ← 권유 화면을 띄울지 정하는 순수 함수, "나중에" 기간
 widgets/
   model.ts                    ← TodayOutfit → 위젯이 그릴 값 (계산은 여기서만)
   parts.tsx                   ← 옷 타일
@@ -334,6 +338,7 @@ scripts/cloth-drafts/draw_drafts.py ← 초안 PNG 생성기 (rsvg-convert 필�
 android/app/src/main/
   AndroidManifest.xml         ← 권한(COARSE+BACKGROUND, FINE 제거), 위젯 리시버 2개
   java/com/developer_cm/weatherclothes/widget/TodayOutfit.kt, TodayOutfitSmall.kt
+  java/com/developer_cm/weatherclothes/update/AppUpdateModule.kt, AppUpdatePackage.kt ← MainApplication에 수동 등록
   res/xml/widgetprovider_todayoutfit.xml, widgetprovider_todayoutfitsmall.xml
   assets/fonts/               ← IBM Plex TTF (앱·위젯 공용)
 docs/play-release.md          ← Play 출시 체크리스트
@@ -515,6 +520,18 @@ export const getClothImage = (id: string) => CLOTH_IMAGES[id];
 7. **설정 화면** — 권한 상태, 체감 보정, 출처, 개인정보 링크.
 8. **위젯 4×2 / 2×2** — 핸들러에서 `getTodayOutfit()`, 라이트/다크, 앱에서 제외 변경 시 즉시 갱신.
 9. **마무리** — 에러/오프라인 상태, 접근성 라벨, 릴리스 빌드(AAB) 생성 확인, 12장 체크리스트를 `docs/play-release.md`로 정리.
+
+## 14. 업데이트 권유 (2026-10-31 사용자 요청)
+
+설치된 버전이 Play 스토어 최신 버전보다 낮으면 업데이트를 권유하는 화면(`UpdateScreen`)을 띄운다.
+
+- 최신 버전 확인은 **Google Play 인앱 업데이트 API**(`com.google.android.play:app-update`)로 한다. Play가 알려 주므로 **자체 서버·버전 JSON 없음** (확정 사항 유지). 이 라이브러리는 분석/푸시가 아니다.
+- 네이티브 모듈 `AppUpdate`(Kotlin, `ReactContextBaseJavaModule`)를 `MainApplication`에 직접 등록. 메서드: `checkForUpdate()`, `getCurrentVersion()`, `startImmediateUpdate()`. Play에서 설치하지 않은 빌드는 reject 대신 `supported: false`.
+- 시점: 메인 탭이 처음 뜰 때 한 번 확인 (`RootNavigator`의 `useUpdatePrompt`). 설정 > 앱 정보에서 수동 확인도 가능. 개발 빌드에는 "업데이트 화면 미리보기" 버튼.
+- 규칙 (`src/update/policy.ts`, 테스트 있음): 새 버전 있음 → 띄움 / "나중에" → 같은 versionCode는 3일간 안 띄움, 더 새 버전이면 다시 띄움 / 업데이트 도중 끊김 → 항상 띄움 / Play 우선순위 4 이상 → "나중에" 없음 + 뒤로 가기 막음.
+- "지금 업데이트" → Play 전체 화면(IMMEDIATE) 업데이트. 못 띄우면 Play 스토어 앱 페이지로.
+- Play는 새 버전의 versionName을 알려 주지 않는다 → 화면에는 `BUILD {availableVersionCode}`로 표시. 그래서 **출시마다 `versionCode`를 꼭 올릴 것.**
+- 확인 방법은 `docs/play-release.md` 6장 (내부 앱 공유).
 
 ## 하지 말 것
 

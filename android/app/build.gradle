@@ -115,6 +115,8 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    // 최신 버전 확인·업데이트 화면 (Google Play 인앱 업데이트). 자체 서버 없이 Play가 새 버전 여부를 알려 준다.
+    implementation("com.google.android.play:app-update:2.1.0")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

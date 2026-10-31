@@ -8,20 +8,27 @@ import {
   NavigationContainer,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ClosetScreen } from '../screens/ClosetScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { TodayScreen } from '../screens/TodayScreen';
+import { UpdateScreen } from '../screens/UpdateScreen';
 import { Text } from '../ui/Text';
 import { useTheme } from '../ui/theme';
 import { BORDER } from '../ui/tokens';
+import { checkForUpdate, type UpdateInfo } from '../update/appUpdate';
+import { shouldPromptUpdate } from '../update/policy';
+import { getUpdateSnooze } from '../storage/prefs';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   Main: undefined;
   Onboarding: undefined;
+  /** 업데이트 권유. preview는 설정 화면의 개발용 미리보기 */
+  Update: { info: UpdateInfo; preview?: boolean };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -90,7 +97,33 @@ function TabBar({ state, navigation }: BottomTabBarProps) {
 
 const renderTabBar = (props: BottomTabBarProps) => <TabBar {...props} />;
 
-function MainTabs() {
+/**
+ * 앱을 열 때 한 번 Play 스토어 최신 버전을 확인하고, 더 새 버전이 있으면 업데이트 권유 화면을 띄운다.
+ * Play에서 설치하지 않은 빌드(디버그 등)에서는 확인이 안 되므로 아무것도 하지 않는다.
+ */
+function useUpdatePrompt(
+  navigation: NativeStackScreenProps<RootStackParamList, 'Main'>['navigation'],
+) {
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [info, snooze] = await Promise.all([
+        checkForUpdate(),
+        getUpdateSnooze(),
+      ]);
+      if (cancelled || !shouldPromptUpdate(info, snooze, Date.now())) return;
+      navigation.navigate('Update', { info });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [navigation]);
+}
+
+function MainTabs({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList, 'Main'>) {
+  useUpdatePrompt(navigation);
   return (
     <Tabs.Navigator
       screenOptions={{ headerShown: false }}
@@ -130,6 +163,11 @@ export function RootNavigator({ showOnboarding }: { showOnboarding: boolean }) {
           name="Onboarding"
           component={OnboardingScreen}
           options={{ animation: 'slide_from_bottom' }}
+        />
+        <Stack.Screen
+          name="Update"
+          component={UpdateScreen}
+          options={{ animation: 'slide_from_bottom', gestureEnabled: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -4,4 +4,5 @@ export const STORAGE_KEYS = {
   weatherCache: 'weatherCache',
   settings: 'settings',
   onboardingDone: 'onboardingDone',
+  updateSnooze: 'updateSnooze',
 } as const;

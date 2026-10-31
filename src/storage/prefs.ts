@@ -1,3 +1,4 @@
+import type { UpdateSnooze } from '../update/policy';
 import { STORAGE_KEYS } from './keys';
 import { isNumber, isObject, readJson, writeJson } from './json';
 
@@ -75,3 +76,18 @@ export const getOnboardingDone = () =>
 
 export const setOnboardingDone = (done: boolean) =>
   writeJson(STORAGE_KEYS.onboardingDone, done);
+
+// ── 업데이트 "나중에" ─────────────────────────────────
+
+const isUpdateSnooze = (v: unknown): v is UpdateSnooze =>
+  isObject(v) && isNumber(v.versionCode) && isNumber(v.until);
+
+export const getUpdateSnooze = () =>
+  readJson<UpdateSnooze | null>(
+    STORAGE_KEYS.updateSnooze,
+    null,
+    (v): v is UpdateSnooze | null => v === null || isUpdateSnooze(v),
+  );
+
+export const setUpdateSnooze = (snooze: UpdateSnooze | null) =>
+  writeJson(STORAGE_KEYS.updateSnooze, snooze);
