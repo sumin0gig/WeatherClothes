@@ -25,7 +25,7 @@
 | 추천 기준 | **체감온도(apparent temperature)** |
 | 기온 구간 | 아래 3장의 8구간 표 (사용자가 쓰는 기온별 옷차림표 기준) |
 | 재질 반영 | 날씨 태그별 재질 점수 (아래 4장) |
-| 옷 이미지 | **PNG 이미지 파일**(SVG 아님). 사용자가 나중에 넣는다. 지금은 자리표시자만 만들고, 파일을 넣으면 바로 반영되는 구조만 잡는다. |
+| 옷 이미지 | **PNG 이미지 파일**(SVG 아님). 지금은 사용자 요청으로 그린 **초안 26장**(먹색 선 일러스트, 2026-10-31)이 들어 있고, 사용자가 나중에 직접 수정한 PNG로 교체한다. 이미지가 없는 옷은 자리표시자로 보인다. |
 | 포인트 컬러 | **날씨(체감온도 구간)에 따라 빨강 → 초록 → 파랑으로 변한다.** 고정 주황 아님 (9장 참고). |
 | 저장소 | 기기 로컬 저장소(AsyncStorage) |
 
@@ -329,7 +329,8 @@ widgets/
   widget-task-handler.tsx
 scripts/gen-cloth-images.mjs  ← assets/clothes/*.png → src/outfit/images.ts
 __tests__/                    ← recommend, bands, tags, seed, accent, weather, getTodayOutfit, widget
-assets/clothes/               ← 사용자가 넣을 PNG + README.md (지금은 README만)
+assets/clothes/               ← 옷 PNG + README.md (지금은 초안 26장)
+scripts/cloth-drafts/draw_drafts.py ← 초안 PNG 생성기 (rsvg-convert 필요, 사용자 PNG를 덮어쓰지 않게 주의)
 android/app/src/main/
   AndroidManifest.xml         ← 권한(COARSE+BACKGROUND, FINE 제거), 위젯 리시버 2개
   java/com/developer_cm/weatherclothes/widget/TodayOutfit.kt, TodayOutfitSmall.kt
@@ -418,9 +419,11 @@ export const getAccent = (band: Band) => ACCENT_BY_BAND[band];
 
 ---
 
-## 10. 옷 이미지 — PNG, 지금은 비워둔다
+## 10. 옷 이미지 — PNG (지금은 초안)
 
-사용자가 나중에 **PNG 파일**을 직접 넣는다. 지금은 파일이 하나도 없어도 앱과 위젯이 정상 동작해야 한다.
+2026-10-31 사용자 요청으로 카탈로그 26벌 전부의 **초안 PNG**를 넣었다(먹색 `#16181D` 선 일러스트, 512×512 투명, `scripts/cloth-drafts/draw_drafts.py`로 생성). 사용자가 나중에 같은 파일명으로 수정본을 올린다. 파일이 하나도 없어도 앱과 위젯은 자리표시자로 정상 동작해야 한다.
+
+- 초안은 선이 먹색이라 다크 모드 타일(`#2A2D34`) 위에서 잘 안 보인다. 사용자 이미지로 바꿀 때 함께 정리할 것 (사용자 이미지가 컬러일 수 있으니 `tintColor`를 일괄 적용하지 말 것).
 
 ### 파일 규칙
 
@@ -440,14 +443,14 @@ export const CLOTH_IMAGES: Partial<Record<string, number>> = {
 export const getClothImage = (id: string) => CLOTH_IMAGES[id];
 ```
 
-- 지금은 **빈 객체**로 둔다. 주석 처리된 예시 한 줄만 남긴다.
+- `npm run gen:images`가 `@generated` 구간을 다시 쓴다. 지금은 초안 26장이 모두 등록돼 있다.
 - 선택 사항: `assets/clothes/`의 파일 목록을 읽어 이 파일을 다시 만들어 주는 스크립트 `scripts/gen-cloth-images.mjs`를 만들고 `package.json`에 `"gen:images"`로 등록. 파일명이 카탈로그 `id`와 맞지 않으면 경고를 출력.
 
 ### `ClothImage` 컴포넌트 (`src/ui/ClothImage.tsx`)
 
 - 이미지가 있으면 `<Image source={…} resizeMode="contain" />`
 - 없으면 **자리표시자**: `tile` 색 사각형 + 가운데 `sub` 색 옷걸이 선 아이콘(react-native-svg) + 작은 Mono 카테고리 약자(OUT/TOP/BTM/OP/IN/LEG/ACC)
-- 이미지를 임의로 만들거나 외부에서 내려받지 말 것.
+- 사용자가 요청하지 않은 이미지를 새로 만들거나 외부에서 내려받지 말 것. 사용자가 올린 PNG를 초안 생성기로 덮어쓰지 말 것.
 
 ---
 
@@ -517,7 +520,7 @@ export const getClothImage = (id: string) => CLOTH_IMAGES[id];
 
 - 서버/클라우드/푸시/분석 SDK 추가
 - `ACCESS_FINE_LOCATION` 요청
-- 옷 이미지를 임의로 만들거나 외부 이미지 사용 (사용자가 PNG를 직접 넣는다)
+- 옷 이미지를 요청 없이 새로 만들거나 외부 이미지 사용 (초안 이후에는 사용자가 PNG를 직접 넣는다)
 - 강조색을 하드코딩 (항상 `getAccent(band)` 사용)
 - 위젯 컴포넌트 안에서 데이터 계산·훅 사용
 - 이 문서의 확정 사항을 묻지 않고 변경

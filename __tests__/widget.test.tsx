@@ -1,6 +1,7 @@
 import { buildWidgetTree } from 'react-native-android-widget/lib/commonjs/api/build-widget-tree';
 import type { TodayOutfit } from '../src/core/getTodayOutfit';
 import { CATALOG } from '../src/outfit/catalog';
+import * as images from '../src/outfit/images';
 import { recommend } from '../src/outfit/recommend';
 import { getAccent } from '../src/ui/accent';
 import { toWidgetModel } from '../widgets/model';
@@ -72,16 +73,31 @@ describe('위젯 렌더링', () => {
     expect(cold.accent).toBe(getAccent(1));
   });
 
-  it('이미지가 없으면 카테고리 약자 자리표시자', () => {
+  it('등록된 이미지가 있으면 타일에 이미지가 들어간다', () => {
     const model = toWidgetModel(today(14));
-    expect(model.tiles4.every(t => !t.image)).toBe(true);
-    const all = texts(
-      buildWidgetTree(
-        (renderWidget('TodayOutfit', { data: today(14) }, SIZES[0]) as any)
-          .light,
-      ),
-    );
-    expect(all).toEqual(expect.arrayContaining(['OUT', 'TOP', 'BTM']));
+    expect(model.tiles4.length).toBeGreaterThan(0);
+    expect(model.tiles4.every(t => t.image !== undefined)).toBe(true);
+    for (const name of WIDGET_NAMES) {
+      const rep = renderWidget(name, { data: today(14) }, SIZES[0]) as any;
+      expect(() => buildWidgetTree(rep.light)).not.toThrow();
+    }
+  });
+
+  it('이미지가 없으면 카테고리 약자 자리표시자', () => {
+    const spy = jest.spyOn(images, 'getClothImage').mockReturnValue(undefined);
+    try {
+      const model = toWidgetModel(today(14));
+      expect(model.tiles4.every(t => !t.image)).toBe(true);
+      const all = texts(
+        buildWidgetTree(
+          (renderWidget('TodayOutfit', { data: today(14) }, SIZES[0]) as any)
+            .light,
+        ),
+      );
+      expect(all).toEqual(expect.arrayContaining(['OUT', 'TOP', 'BTM']));
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   it('4×2 타일은 최대 4개, 2×2는 2개', () => {
